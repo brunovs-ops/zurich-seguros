@@ -19,6 +19,10 @@ async function setup() {
   console.log("Criando schema...");
   await pool.query(schema);
 
+  // Idempotente: limpa antes de inserir, pra re-rodar sempre refletir o catálogo atual sem duplicar.
+  console.log("Limpando catálogo anterior...");
+  await pool.query("DELETE FROM aparelhos");
+
   console.log(`Inserindo ${APARELHOS.length} aparelhos...`);
   for (const a of APARELHOS) {
     await pool.query(
