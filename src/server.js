@@ -4,7 +4,9 @@
 
 import express from "express";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 import {
   listarTipos,
   listarFabricantes,
@@ -24,6 +26,11 @@ app.use(express.json());
 // Health check.
 app.get("/health", (req, res) => {
   res.json({ ok: true, database: hasDatabase ? "postgres" : "memoria" });
+});
+
+// WebView de vistoria (simulada). Lê modelo/plano/protocolo via query params.
+app.get("/vistoria", (req, res) => {
+  res.sendFile(join(__dirname, "public", "vistoria.html"));
 });
 
 // Tipos de aparelho (celular, smartwatch).
