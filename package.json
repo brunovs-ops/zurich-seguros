@@ -1,0 +1,19 @@
+{
+  "name": "zurich-seguro-mcp",
+  "version": "1.0.0",
+  "description": "Backend/cérebro da demo Zurich Seguro Celular. Serve o catálogo de aparelhos e a cotação para a Code Action de endpoint do WhatsApp Flow.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "db:setup": "node src/db/setup.js",
+    "test:pricing": "node src/db/test_pricing.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}
