@@ -35,7 +35,6 @@
     flex-direction: column;
   }
 
-  /* Cabeçalho */
   .top {
     background: var(--azul);
     color: var(--branco);
@@ -50,7 +49,6 @@
   .brand span { font-weight: 300; }
   .top .sub { margin-top: 4px; font-size: 13px; opacity: .85; }
 
-  /* Stepper */
   .steps {
     display: flex;
     gap: 6px;
@@ -75,23 +73,17 @@
   .step.done .dot { background: var(--ok); color: #fff; }
   .step.active .dot { background: var(--azul); color: #fff; }
 
-  .content { padding: 22px; flex: 1; display: flex; flex-direction: column; }
-
-  .aparelho {
-    background: var(--mist);
-    border: 1px solid var(--linha);
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: var(--cinza);
-    margin-bottom: 20px;
+  .content {
+    padding: 22px;
+    padding-bottom: 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
-  .aparelho b { color: var(--ink); font-weight: 600; }
 
-  h1 { font-size: 20px; line-height: 1.25; margin-bottom: 8px; }
+  h1 { font-size: 20px; line-height: 1.25; margin-bottom: 8px; margin-top: 8px; }
   .lead { font-size: 14px; color: var(--cinza); line-height: 1.5; margin-bottom: 22px; }
 
-  /* Palco do scan */
   .stage {
     position: relative;
     background: var(--azul-fundo);
@@ -136,11 +128,15 @@
   }
   .badge svg { width: 50px; height: 50px; }
 
-  /* Checklist */
-  .checks { list-style: none; margin-bottom: 22px; }
+  .checks {
+    list-style: none;
+    margin-bottom: 22px;
+    padding: 0;
+  }
   .checks li {
     display: flex; align-items: center; gap: 12px;
-    padding: 12px 0; border-bottom: 1px solid var(--linha);
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--linha);
     font-size: 14px; color: var(--cinza);
     opacity: .45; transition: opacity .3s;
   }
@@ -158,7 +154,7 @@
     transform: rotate(45deg) translate(-1px,-1px);
   }
 
-  .spacer { flex: 1; }
+  .spacer { flex: 1; min-height: 20px; }
 
   .btn {
     width: 100%; border: none; border-radius: 12px;
@@ -167,9 +163,7 @@
   }
   .btn.primary { background: var(--azul); color: #fff; }
   .btn.primary:disabled { background: var(--linha); color: var(--cinza); cursor: default; }
-  .btn.ok { background: var(--ok); color: #fff; }
 
-  /* Estado de retorno ao WhatsApp */
   .whatsapp-box {
     background: #E7F5EE;
     border: 1px solid #B8DFC9;
@@ -210,9 +204,6 @@
     </div>
 
     <div class="content">
-      <div class="aparelho" id="aparelho">Carregando dados da contratação...</div>
-
-      <!-- Etapa: instrução -->
       <div id="etapaFoto">
         <h1>Vamos conferir seu aparelho</h1>
         <p class="lead">Posicione o aparelho em frente ao espelho, com a tela ligada, e toque em iniciar. A verificação leva alguns segundos.</p>
@@ -235,11 +226,9 @@
         <button class="btn primary" id="btnScan">Iniciar vistoria</button>
       </div>
 
-      <!-- Etapa: aprovado -->
       <div id="etapaOk" class="hide">
         <h1>Vistoria aprovada</h1>
         <p class="lead">Seu aparelho passou na verificação. Estamos retomando sua contratação no WhatsApp.</p>
-        <div class="aparelho" id="protocoloBox"></div>
         <div class="whatsapp-box">
           <div class="icon">
             <svg viewBox="0 0 24 24"><path d="M20.52 3.48A11.79 11.79 0 0 0 12.03 0C5.42 0 .05 5.37.05 11.98c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62a11.94 11.94 0 0 0 5.86 1.5h.01c6.61 0 11.98-5.37 11.98-11.98 0-3.2-1.25-6.21-3.5-8.42zM12.04 21.8h-.01a9.83 9.83 0 0 1-5.01-1.37l-.36-.21-3.66.96.98-3.57-.23-.37a9.83 9.83 0 0 1-1.51-5.26c0-5.44 4.42-9.86 9.87-9.86 2.63 0 5.11 1.03 6.97 2.89a9.79 9.79 0 0 1 2.88 6.98c0 5.44-4.43 9.86-9.92 9.86zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.21 5.09 4.5.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35z"/></svg>
@@ -255,22 +244,11 @@
   </div>
 
 <script>
-  // Lê os dados da contratação da URL.
-  // Do Flow: modelo, plano, periodicidade, valor, franquia, protocolo
-  // Do bot para a Botmaker: cid (telefone) e ch (channelId)
+  // Lê apenas cid e ch da URL. Suficiente para acionar o /submit
+  // que dispara trigger-intent na Botmaker e retoma a conversa.
   var params = new URLSearchParams(window.location.search);
-  var modelo        = params.get("modelo") || "Seu aparelho";
-  var plano         = params.get("plano") || "";
-  var protocolo     = params.get("protocolo") || "";
-  var periodicidade = params.get("periodicidade") || "";
-  var valor         = params.get("valor") || "";
-  var franquia      = params.get("franquia") || "";
-  var cid           = params.get("cid") || "";
-  var ch            = params.get("ch") || "";
-
-  var planoNome = { economico: "Econômico", completo: "Completo", supercompleto: "Supercompleto" }[plano] || plano;
-  document.getElementById("aparelho").innerHTML =
-    "<b>" + modelo + "</b>" + (planoNome ? " · Plano " + planoNome : "");
+  var cid = params.get("cid") || "";
+  var ch  = params.get("ch") || "";
 
   var stage = document.getElementById("stage");
   var checks = Array.prototype.slice.call(document.querySelectorAll("#checks li"));
@@ -281,31 +259,22 @@
     btnScan.textContent = "Verificando...";
     stage.classList.add("scanning");
 
-    // Marca os itens do checklist em sequência.
     checks.forEach(function (li, i) {
       setTimeout(function () { li.classList.add("on"); }, 700 + i * 700);
     });
 
-    // Ao terminar o scan, mostra aprovado.
     setTimeout(function () {
       stage.classList.remove("scanning");
       stage.classList.add("approved");
     }, 700 + checks.length * 700 + 300);
 
-    // Troca de tela e dispara o trigger-intent na Botmaker.
     setTimeout(function () {
       document.getElementById("etapaFoto").classList.add("hide");
       document.getElementById("etapaOk").classList.remove("hide");
-      var box = document.getElementById("protocoloBox");
-      box.innerHTML = "<b>" + modelo + "</b>" +
-        (planoNome ? " · " + planoNome : "") +
-        (protocolo ? "<br>Protocolo: " + protocolo : "");
       retomarBot();
     }, 700 + checks.length * 700 + 1200);
   });
 
-  // Chama /submit no backend, que dispara trigger-intent na Botmaker
-  // e retoma a conversa no WhatsApp.
   function retomarBot() {
     var status = document.getElementById("status");
 
@@ -317,16 +286,7 @@
     fetch("/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cid: cid,
-        ch: ch,
-        protocolo: protocolo,
-        modelo: modelo,
-        plano: plano,
-        periodicidade: periodicidade,
-        valor: valor,
-        franquia: franquia
-      })
+      body: JSON.stringify({ cid: cid, ch: ch })
     })
       .then(function (r) { return r.json(); })
       .then(function (json) {
