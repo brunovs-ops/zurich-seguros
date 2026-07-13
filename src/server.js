@@ -30,26 +30,38 @@ app.get("/vistoria", (req, res) => {
 });
 // Vistoria aprovada -> retoma o bot via trigger-intent da Botmaker.
 // A webview de vistoria chama esta rota no final do fluxo de scan.
+// IMPORTANTE: só envia variáveis que foram realmente recebidas no request.
+// Se enviássemos "" para variáveis já existentes no bot, o trigger-intent
+// sobrescreveria os valores (bug identificado em teste).
 app.post("/submit", async (req, res) => {
-  const { cid, ch, protocolo, modelo, plano, periodicidade, valor, franquia } = req.body;
+  const { cid, ch, ...campos } = req.body;
 
   if (!cid || !ch) {
     return res.status(400).json({ ok: false, error: "cid/ch ausentes" });
   }
 
-  const result = await triggerIntent({
-    cid,
-    ch,
-    variables: {
-      zurich_vistoria_status: "aprovada",
-      zurich_protocolo:       protocolo    || "",
-      zurich_modelo:          modelo       || "",
-      zurich_plano:           plano        || "",
-      zurich_periodicidade:   periodicidade || "",
-      zurich_valor:           valor        || "",
-      zurich_franquia:        franquia     || ""
+  // Sempre marca a vistoria como aprovada.
+  const variables = { zurich_vistoria_status: "aprovada" };
+
+  // Mapeia os campos que vieram no body para as variáveis do bot.
+  // Só inclui os que foram realmente enviados e não estão vazios.
+  const mapa = {
+    protocolo:     "zurich_protocolo",
+    modelo:        "zurich_modelo",
+    plano:         "zurich_plano",
+    periodicidade: "zurich_periodicidade",
+    valor:         "zurich_valor",
+    franquia:      "zurich_franquia"
+  };
+
+  for (const [chaveEntrada, nomeVar] of Object.entries(mapa)) {
+    const v = campos[chaveEntrada];
+    if (v !== undefined && v !== null && String(v).trim() !== "") {
+      variables[nomeVar] = String(v);
     }
-  });
+  }
+
+  const result = await triggerIntent({ cid, ch, variables });
 
   if (result.ok) return res.json({ ok: true });
   return res.status(502).json({ ok: false, error: result.error });
