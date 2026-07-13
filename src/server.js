@@ -1,11 +1,9 @@
 // Backend/cérebro da demo Zurich Seguro Celular.
 // Expõe o catálogo e a cotação para a Code Action de endpoint do WhatsApp Flow.
 // A CA de endpoint (data_exchange) é quem chama estas rotas e formata para cada tela.
-
 import express from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-
 const __dirname = dirname(fileURLToPath(import.meta.url));
 import {
   listarTipos,
@@ -19,20 +17,43 @@ import {
   BENEFICIOS_GERAIS
 } from "./services/cotacao.js";
 import { hasDatabase } from "./db/pool.js";
-
+import { triggerIntent } from "./services/botmaker.js";
 const app = express();
 app.use(express.json());
-
 // Health check.
 app.get("/health", (req, res) => {
   res.json({ ok: true, database: hasDatabase ? "postgres" : "memoria" });
 });
-
 // WebView de vistoria (simulada). Lê modelo/plano/protocolo via query params.
 app.get("/vistoria", (req, res) => {
   res.sendFile(join(__dirname, "public", "vistoria.html"));
 });
+// Vistoria aprovada -> retoma o bot via trigger-intent da Botmaker.
+// A webview de vistoria chama esta rota no final do fluxo de scan.
+app.post("/submit", async (req, res) => {
+  const { cid, ch, protocolo, modelo, plano, periodicidade, valor, franquia } = req.body;
 
+  if (!cid || !ch) {
+    return res.status(400).json({ ok: false, error: "cid/ch ausentes" });
+  }
+
+  const result = await triggerIntent({
+    cid,
+    ch,
+    variables: {
+      zurich_vistoria_status: "aprovada",
+      zurich_protocolo:       protocolo    || "",
+      zurich_modelo:          modelo       || "",
+      zurich_plano:           plano        || "",
+      zurich_periodicidade:   periodicidade || "",
+      zurich_valor:           valor        || "",
+      zurich_franquia:        franquia     || ""
+    }
+  });
+
+  if (result.ok) return res.json({ ok: true });
+  return res.status(502).json({ ok: false, error: result.error });
+});
 // Tipos de aparelho (celular, smartwatch).
 app.get("/api/tipos", async (req, res, next) => {
   try {
@@ -41,7 +62,6 @@ app.get("/api/tipos", async (req, res, next) => {
     next(err);
   }
 });
-
 // Fabricantes por tipo. Ex.: GET /api/fabricantes?tipo=celular
 app.get("/api/fabricantes", async (req, res, next) => {
   try {
@@ -52,7 +72,6 @@ app.get("/api/fabricantes", async (req, res, next) => {
     next(err);
   }
 });
-
 // Modelos por tipo + fabricante. Ex.: GET /api/modelos?tipo=celular&fabricante=Apple
 app.get("/api/modelos", async (req, res, next) => {
   try {
@@ -65,7 +84,6 @@ app.get("/api/modelos", async (req, res, next) => {
     next(err);
   }
 });
-
 // Cotação de todos os planos para um aparelho, com franquia e cobrança fixas.
 // Alimenta a tela de seleção de plano do Flow.
 // Ex.: GET /api/cotacao?aparelhoId=1&franquia=reduzida&cobranca=anual
@@ -73,10 +91,8 @@ app.get("/api/cotacao", async (req, res, next) => {
   try {
     const { aparelhoId, franquia = "reduzida", cobranca = "anual" } = req.query;
     if (!aparelhoId) return res.status(400).json({ erro: "aparelhoId é obrigatório" });
-
     const aparelho = await buscarAparelho(aparelhoId);
     if (!aparelho) return res.status(404).json({ erro: "aparelho não encontrado" });
-
     const cotacoes = cotarTodosPlanos(aparelho.valorAparelho, franquia, cobranca);
     res.json({
       aparelho: {
@@ -93,7 +109,6 @@ app.get("/api/cotacao", async (req, res, next) => {
     next(err);
   }
 });
-
 // Cotação de uma combinação única (recálculo em tela do Flow via update_data).
 // Ex.: GET /api/cotacao/uma?aparelhoId=1&plano=supercompleto&franquia=reduzida&cobranca=anual
 app.get("/api/cotacao/uma", async (req, res, next) => {
@@ -104,22 +119,18 @@ app.get("/api/cotacao/uma", async (req, res, next) => {
     }
     const aparelho = await buscarAparelho(aparelhoId);
     if (!aparelho) return res.status(404).json({ erro: "aparelho não encontrado" });
-
     res.json({ cotacao: cotar(aparelho.valorAparelho, plano, franquia, cobranca) });
   } catch (err) {
     next(err);
   }
 });
-
 // Middleware de erro.
 app.use((err, req, res, next) => {
   console.error("Erro:", err.message);
   res.status(500).json({ erro: err.message });
 });
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Zurich Seguro MCP rodando na porta ${PORT} (db: ${hasDatabase ? "postgres" : "memoria"})`);
 });
-
 export default app;
