@@ -16,7 +16,7 @@ const API_URL        = 'https://api.botmaker.com/v2.0/chats-actions/trigger-inte
  * @param {Object} params.variables   variáveis a serem populadas no bot (todas viram string)
  * @returns {Promise<{ok: boolean, status: number, error?: string}>}
  */
-async function triggerIntent({ cid, ch, variables = {} }) {
+export async function triggerIntent({ cid, ch, variables = {} }) {
   if (!BOTMAKER_TOKEN) {
     return { ok: false, status: 500, error: 'BOTMAKER_TOKEN não configurado' };
   }
@@ -46,7 +46,6 @@ async function triggerIntent({ cid, ch, variables = {} }) {
       body: JSON.stringify(body)
     });
 
-    // trigger-intent retorna 202 em caso de sucesso
     if (r.status === 202) {
       return { ok: true, status: 202 };
     }
@@ -59,5 +58,3 @@ async function triggerIntent({ cid, ch, variables = {} }) {
     return { ok: false, status: 500, error: e.message };
   }
 }
-
-module.exports = { triggerIntent };
