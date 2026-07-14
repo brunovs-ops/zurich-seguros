@@ -1,8 +1,13 @@
 // Serviço de cotação. Recebe o valor do aparelho e a combinação escolhida
 // (plano, franquia, forma de cobrança) e devolve os valores calculados.
 // Não acessa o banco: recebe o valor do aparelho já resolvido pelo chamador.
-
-import { PLANOS, FRANQUIAS, COBRANCAS, BENEFICIOS_GERAIS } from "../config/pricing.js";
+import {
+  PLANOS,
+  FRANQUIAS,
+  COBRANCAS,
+  BENEFICIOS_GERAIS,
+  DESCONTO_AVISTA_PCT
+} from "../config/pricing.js";
 
 function round2(n) {
   return Math.round((n + Number.EPSILON) * 100) / 100;
@@ -30,6 +35,10 @@ export function cotar(valorAparelho, planoId, franquiaId, cobrancaId) {
   );
   const parcela = round2(premioAnual / cobranca.parcelas);
 
+  // Calculo do valor anual a vista com desconto (aplicavel apenas em cobranca anual)
+  const descontoPct = cobranca.id === "anual" ? DESCONTO_AVISTA_PCT : 0;
+  const valorAnualAVista = round2(premioAnual * (1 - descontoPct / 100));
+
   return {
     plano: plano.id,
     planoNome: plano.nome,
@@ -44,10 +53,14 @@ export function cotar(valorAparelho, planoId, franquiaId, cobrancaId) {
     premioAnual,
     parcelas: cobranca.parcelas,
     parcela,
-    // Strings prontas para exibição no Flow.
+    // Valores a vista (com desconto)
+    valorAnualAVista,
+    descontoAVistaPct: descontoPct,
+    // Strings prontas para exibição no Flow e no agente.
     valorAparelhoBRL: formatBRL(valorAparelho),
     valorFranquiaBRL: formatBRL(valorFranquia),
     parcelaBRL: formatBRL(parcela),
+    valorAnualAVistaBRL: formatBRL(valorAnualAVista),
     resumoParcela: `${cobranca.parcelas}x de ${formatBRL(parcela)}${cobranca.semJuros ? " sem juros" : ""}`
   };
 }
