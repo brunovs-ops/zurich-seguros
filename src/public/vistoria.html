@@ -6,9 +6,9 @@
 <title>Vistoria digital | Zurich</title>
 <style>
   :root {
-    --azul: #2167AE;
-    --azul-fundo: #16407A;
-    --azul-claro: #4A8BC7;
+    --azul: #123F8C;
+    --azul-fundo: #0A2A5E;
+    --azul-claro: #2E63C4;
     --mist: #EEF3FA;
     --ink: #17233F;
     --cinza: #6B7A99;
@@ -38,30 +38,16 @@
   .top {
     background: var(--azul);
     color: var(--branco);
-    padding: 20px 22px 22px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    padding: 20px 22px 26px;
   }
-  .top .logo {
-    width: 56px; height: 56px;
-    background: var(--branco);
-    flex: none;
-    display: flex; align-items: center; justify-content: center;
-    padding: 6px;
-    border-radius: 8px;
+  .brand {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }
-  .top .logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-  .top .titles .brand {
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-  .top .titles .sub { margin-top: 2px; font-size: 12px; opacity: .9; }
+  .brand span { font-weight: 300; }
+  .top .sub { margin-top: 4px; font-size: 13px; opacity: .85; }
 
   .steps {
     display: flex;
@@ -81,12 +67,11 @@
     background: var(--linha);
     color: var(--cinza);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 500; font-size: 12px;
+    font-weight: 700; font-size: 12px;
     margin: 0 auto 6px;
   }
   .step.done .dot { background: var(--ok); color: #fff; }
   .step.active .dot { background: var(--azul); color: #fff; }
-  .step.active { color: var(--ink); }
 
   .content {
     padding: 22px;
@@ -96,7 +81,7 @@
     flex-direction: column;
   }
 
-  h1 { font-size: 20px; line-height: 1.25; margin-bottom: 8px; margin-top: 8px; font-weight: 500; }
+  h1 { font-size: 20px; line-height: 1.25; margin-bottom: 8px; margin-top: 8px; }
   .lead { font-size: 14px; color: var(--cinza); line-height: 1.5; margin-bottom: 22px; }
 
   .stage {
@@ -114,7 +99,7 @@
     border: 3px solid rgba(255,255,255,.85);
     border-radius: 16px;
     position: relative;
-    background: var(--azul);
+    background: linear-gradient(160deg, #1c4fa8, #0d2f68);
   }
   .phone::before {
     content: "";
@@ -173,11 +158,10 @@
 
   .btn {
     width: 100%; border: none; border-radius: 12px;
-    padding: 16px; font-size: 15px; font-weight: 500;
+    padding: 16px; font-size: 15px; font-weight: 700;
     cursor: pointer; font-family: inherit;
   }
   .btn.primary { background: var(--azul); color: #fff; }
-  .btn.primary:hover { background: var(--azul-fundo); }
   .btn.primary:disabled { background: var(--linha); color: var(--cinza); cursor: default; }
 
   .whatsapp-box {
@@ -195,7 +179,7 @@
   }
   .whatsapp-box .icon svg { width: 26px; height: 26px; fill: #fff; }
   .whatsapp-box .txt { font-size: 14px; color: var(--ink); line-height: 1.4; }
-  .whatsapp-box .txt b { display: block; margin-bottom: 2px; font-weight: 500; }
+  .whatsapp-box .txt b { display: block; margin-bottom: 2px; }
 
   .status {
     font-size: 13px; color: var(--cinza); text-align: center;
@@ -208,11 +192,8 @@
 <body>
   <div class="app">
     <div class="top">
-      <div class="logo"><img src="/zurich-logo.png" alt="Zurich" /></div>
-      <div class="titles">
-        <div class="brand">Zurich Seguros</div>
-        <div class="sub">Vistoria digital do aparelho</div>
-      </div>
+      <div class="brand">ZURICH <span>Seguros</span></div>
+      <div class="sub">Vistoria digital do aparelho</div>
     </div>
 
     <div class="steps">
@@ -263,6 +244,8 @@
   </div>
 
 <script>
+  // Lê apenas cid e ch da URL. Suficiente para acionar o /submit
+  // que dispara trigger-intent na Botmaker e retoma a conversa.
   var params = new URLSearchParams(window.location.search);
   var cid = params.get("cid") || "";
   var ch  = params.get("ch") || "";
