@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "db:setup": "node src/db/setup.js",
-    "test:pricing": "node src/db/test_pricing.js"
+    "test:pricing": "node src/db/test_pricing.js",
     "seed": "node src/db/seed.js"
   },
   "engines": {
