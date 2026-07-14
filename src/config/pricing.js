@@ -60,3 +60,7 @@ export const BENEFICIOS_GERAIS = [
   "Análise, aprovação e proteção imediata",
   "Atendimento 24 horas"
 ];
+
+// Desconto aplicado no pagamento anual à vista (evita 12x sem juros).
+// Aplicável apenas em cobranca === "anual".
+export const DESCONTO_AVISTA_PCT = 5;
