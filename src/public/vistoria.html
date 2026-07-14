@@ -44,14 +44,18 @@
     gap: 14px;
   }
   .top .logo {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: var(--mist);
+    width: 56px; height: 56px;
+    background: var(--branco);
     flex: none;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
+    padding: 6px;
+    border-radius: 8px;
   }
-  .top .logo img { width: 100%; height: 100%; object-fit: cover; }
+  .top .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
   .top .titles .brand {
     font-size: 18px;
     font-weight: 500;
